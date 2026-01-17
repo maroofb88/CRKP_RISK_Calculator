@@ -12,16 +12,13 @@ warnings.filterwarnings('ignore')
 st.set_page_config(
     page_title="CRKP Risk Calculator",
     page_icon="🦠",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # Title and description
-st.title("🦠 CRKP Risk Prediction Calculator")
-st.markdown("""
-**Clinical Decision Support for Carbapenem-Resistant *Klebsiella pneumoniae***  
-*Validated on retrospective cohort (n=7,225) | Temporal validation | Prevalence-shift tested*
-""")
+st.title("CRKP Risk Prediction Calculator")
+st.markdown("Clinical Decision Support for Carbapenem-Resistant Klebsiella pneumoniae")
+st.markdown("Validated on retrospective cohort (n=7,225) | Temporal validation | Prevalence-shift tested")
 
 # Load model and preprocessor
 @st.cache_resource
@@ -39,38 +36,12 @@ def load_model():
 
 model, preprocessor, feature_info = load_model()
 
-# Sidebar for model info
-with st.sidebar:
-    st.header("📊 Model Performance")
-    st.metric("AUPRC", "0.269", delta=None)
-    st.metric("AUROC", "0.703", delta=None)
-    st.metric("Sensitivity", "84.7%", delta=None)
-    st.metric("Specificity", "51.9%", delta=None)
-    st.metric("Optimal Threshold", "0.263", delta=None)
-    
-    st.markdown("---")
-    st.header("🎯 Clinical Utility")
-    st.markdown("""
-    **High NPV (94.2%):** Good for ruling out CRKP  
-    **Moderate PPV (26.7%):** Confirmatory testing needed  
-    **Best used as:** Screening tool for carbapenem-sparing therapy
-    """)
-    
-    st.markdown("---")
-    st.markdown("### ⚠️ Disclaimer")
-    st.markdown("""
-    **FOR RESEARCH USE ONLY**
-    
-    Not for direct clinical decision-making.
-    Always use clinical judgment and confirmatory testing.
-    """)
-
-# Main app content
-tab1, tab2, tab3 = st.tabs(["📋 Patient Input", "📊 Results", "ℹ️ Model Info"])
+# Create tabs
+tab1, tab2, tab3 = st.tabs(["Patient Input", "Results", "Model Info"])
 
 with tab1:
     st.header("Patient Information Input")
-    st.markdown("All data must be available **before** culture order time.")
+    st.markdown("All data must be available before culture order time.")
     
     input_data = {}
     
@@ -114,14 +85,14 @@ with tab1:
     st.subheader("Laboratory Values (Most Recent)")
     col1, col2, col3 = st.columns(3)
     with col1:
-        input_data['lymphocytes_last'] = st.number_input("Lymphocytes (x10⁹/L)", 0.0, 20.0, 1.5, step=0.1)
+        input_data['lymphocytes_last'] = st.number_input("Lymphocytes (x10^9/L)", 0.0, 20.0, 1.5, step=0.1)
     with col2:
         input_data['albumin_last'] = st.number_input("Albumin (g/dL)", 0.0, 10.0, 3.5, step=0.1)
     with col3:
-        input_data['plt_last'] = st.number_input("Platelets (x10⁹/L)", 0.0, 1000.0, 200.0, step=1.0)
+        input_data['plt_last'] = st.number_input("Platelets (x10^9/L)", 0.0, 1000.0, 200.0, step=1.0)
     
     # Calculate button
-    calculate = st.button("🚀 Calculate CRKP Risk", type="primary", use_container_width=True)
+    calculate = st.button("Calculate CRKP Risk", type="primary", use_container_width=True)
 
 with tab2:
     st.header("Prediction Results")
@@ -167,21 +138,21 @@ with tab2:
         st.plotly_chart(fig, use_container_width=True)
         
         # Clinical recommendations
-        st.subheader("🧪 Clinical Recommendations")
+        st.subheader("Clinical Recommendations")
         if probability >= 0.263:
             st.warning("""
-            **CRKP LIKELY - Consider:**
-            1. **Empirical therapy**: Consider carbapenem-sparing regimens pending susceptibility
-            2. **Infection control**: Implement contact precautions
-            3. **Diagnostics**: Await culture and sensitivity results
-            4. **Consultation**: Consider infectious diseases consult
+            CRKP LIKELY - Consider:
+            1. Empirical therapy: Consider carbapenem-sparing regimens pending susceptibility
+            2. Infection control: Implement contact precautions
+            3. Diagnostics: Await culture and sensitivity results
+            4. Consultation: Consider infectious diseases consult
             """)
         else:
             st.success("""
-            **CRKP UNLIKELY - Consider:**
-            1. **Empirical therapy**: May consider carbapenem-sparing regimens
-            2. **Monitoring**: Continue clinical monitoring
-            3. **De-escalation**: De-escalate therapy if culture results allow
+            CRKP UNLIKELY - Consider:
+            1. Empirical therapy: May consider carbapenem-sparing regimens
+            2. Monitoring: Continue clinical monitoring
+            3. De-escalation: De-escalate therapy if culture results allow
             """)
 
 with tab3:
@@ -190,61 +161,61 @@ with tab3:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📈 Model Performance")
+        st.subheader("Model Performance")
         st.markdown("""
-        **Primary Metrics (Temporal Validation):**
-        - **AUPRC**: 0.269 (95% CI: 0.237-0.312)
-        - **AUROC**: 0.703 (95% CI: 0.674-0.730)
-        - **Sensitivity**: 84.7% (80.5-89.1%)
-        - **Specificity**: 51.9% (48.6-54.7%)
-        - **PPV**: 26.7% (23.3-29.7%)
-        - **NPV**: 94.2% (92.6-95.8%)
-        - **Brier Score**: 0.256
-        - **Optimal Threshold**: 0.263 (maximizing F1)
+        Primary Metrics (Temporal Validation):
+        - AUPRC: 0.269 (95% CI: 0.237-0.312)
+        - AUROC: 0.703 (95% CI: 0.674-0.730)
+        - Sensitivity: 84.7% (80.5-89.1%)
+        - Specificity: 51.9% (48.6-54.7%)
+        - PPV: 26.7% (23.3-29.7%)
+        - NPV: 94.2% (92.6-95.8%)
+        - Brier Score: 0.256
+        - Optimal Threshold: 0.263 (maximizing F1)
         """)
     
     with col2:
-        st.subheader("🏗️ Model Architecture")
+        st.subheader("Model Architecture")
         st.markdown("""
-        **Algorithm**: XGBoost with Edited Nearest Neighbors  
-        **Features**: 23 clinical predictors  
-        **Imbalance Strategy**: Edited Nearest Neighbors (best of 6 strategies)  
-        **Validation**: 5-fold stratified CV + temporal validation  
-        **Training**: 5,780 patients (12.7% CRKP)  
-        **Testing**: 1,445 patients (17.2% CRKP)  
-        **Temporal Split**: ≤2023-07-07 / ≥2023-07-07
+        Algorithm: XGBoost with Edited Nearest Neighbors
+        Features: 23 clinical predictors
+        Imbalance Strategy: Edited Nearest Neighbors (best of 6 strategies)
+        Validation: 5-fold stratified CV + temporal validation
+        Training: 5,780 patients (12.7% CRKP)
+        Testing: 1,445 patients (17.2% CRKP)
+        Temporal Split: <=2023-07-07 / >=2023-07-07
         """)
     
-    st.subheader("📊 Prevalence-Shift Analysis")
+    st.subheader("Prevalence-Shift Analysis")
     st.markdown("""
     Model evaluated across 14 CR:CS ratios (1:1 to 1:50):
-    - **AUPRC range**: 0.373 (50% prevalence) to 0.037 (2% prevalence)
-    - **AUPRC degradation**: 90% at low prevalence
-    - **AUROC stability**: SD = 0.001 across prevalence shifts
+    - AUPRC range: 0.373 (50% prevalence) to 0.037 (2% prevalence)
+    - AUPRC degradation: 90% at low prevalence
+    - AUROC stability: SD = 0.001 across prevalence shifts
     """)
     
-    st.subheader("🎯 Feature Importance (Top 10)")
+    st.subheader("Feature Importance (Top Predictors)")
     st.markdown("""
-    1. **days_since_last_abx** - Most important predictor
-    2. **Recent antibiotic exposure patterns**
-    3. **ICU admission history**
-    4. **Hospitalization duration**
-    5. **Age categories**
-    6. **Laboratory values** (lymphocytes, albumin, platelets)
-    7. **Ward transfers**
-    8. **Specific antibiotic classes**
+    1. days_since_last_abx - Most important predictor
+    2. Recent antibiotic exposure patterns
+    3. ICU admission history
+    4. Hospitalization duration
+    5. Age categories
+    6. Laboratory values (lymphocytes, albumin, platelets)
+    7. Ward transfers
+    8. Specific antibiotic classes
     """)
     
-    st.subheader("⚠️ Limitations")
+    st.subheader("Limitations")
     st.markdown("""
-    1. **Retrospective design**: Subject to biases of observational data
-    2. **Single center**: External validation needed
-    3. **Missing data**: Some laboratory values had high missingness
-    4. **Prevalence sensitivity**: Performance varies with local prevalence
-    5. **Research tool**: Not yet prospectively validated
+    1. Retrospective design: Subject to biases of observational data
+    2. Single center: External validation needed
+    3. Missing data: Some laboratory values had high missingness
+    4. Prevalence sensitivity: Performance varies with local prevalence
+    5. Research tool: Not yet prospectively validated
     """)
 
-# Prediction logic
+# Prediction logic - FIXED: No tab switching
 if calculate and model is not None:
     try:
         # Prepare input data
@@ -286,20 +257,15 @@ if calculate and model is not None:
         st.session_state.risk_category = risk_category
         st.session_state.prediction = prediction
         
-        # Switch to results tab
-        st.switch_page("streamlit_app.py#tab2")
+        # Show success message
+        st.success("Prediction complete! Switch to 'Results' tab to view.")
         
     except Exception as e:
         st.error(f"Error making prediction: {str(e)}")
+elif calculate:
+    st.error("Model not loaded. Please check model files.")
 
 # Footer
 st.markdown("---")
-st.markdown("""
-<div style='text-align: center'>
-    <p style='font-size: 0.8em; color: gray;'>
-        CRKP Prediction Calculator v1.0 | For research use only | 
-        <a href='https://github.com/maroofb88/CRKP_RISK_Calculator' target='_blank'>GitHub Repository</a> |
-        Model ID: XGB_ENN_v1 | Validation: Temporal 80/20
-    </p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("CRKP Prediction Calculator v1.0 | For research use only")
+st.markdown("GitHub Repository: https://github.com/maroofb88/CRKP_RISK_Calculator")
